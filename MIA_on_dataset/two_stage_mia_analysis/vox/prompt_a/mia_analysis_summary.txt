@@ -1,0 +1,29 @@
+MIA Analysis Summary Report
+==================================================
+
+Top 10 Individual Metrics by AUC:
+----------------------------------------
+ 1. random_forest_test_auc        : 0.6118
+ 2. logistic_regression_test_auc  : 0.6203
+ 3. max_renyi_1.0_alpha_inf       : 0.4298
+ 4. max_renyi_1.0_alpha_2.0       : 0.4210
+ 5. max_renyi_1.0_alpha_1.0       : 0.4103
+ 6. max_renyi_1.0_alpha_0.5       : 0.3872
+ 7. max_renyi_0.1_alpha_inf       : 0.4572
+ 8. max_renyi_0.1_alpha_2.0       : 0.4495
+ 9. max_renyi_0.1_alpha_1.0       : 0.4448
+10. max_renyi_0.1_alpha_0.5       : 0.4517
+
+Best Ensemble Classifier: Logistic Regression
+Best Test AUC: 0.6203
+
+All Classifier Results:
+------------------------------
+Logistic Regression:
+  CV AUC: 0.6186 ± 0.0268
+  Test AUC: 0.6203
+
+Random Forest:
+  CV AUC: 0.6064 ± 0.0179
+  Test AUC: 0.6118
+

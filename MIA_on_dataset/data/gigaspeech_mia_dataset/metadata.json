@@ -1,0 +1,13 @@
+{
+  "dataset_name": "gigaspeech_mia_dataset",
+  "total_samples": 4000,
+  "splits": {
+    "train": 2000,
+    "test": 2000
+  },
+  "audio_format": "wav",
+  "sampling_rate": "16000",
+  "description": "GigaSpeech dataset organized in MIA format - Updated with correct is_member values and cleaned columns",
+  "train_samples": 2000,
+  "test_samples": 2000
+}

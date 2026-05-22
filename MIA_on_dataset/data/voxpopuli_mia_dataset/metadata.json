@@ -1,0 +1,16 @@
+{
+  "total_samples": 3842,
+  "train_samples": 2000,
+  "test_samples": 1842,
+  "members": 2000,
+  "non_members": 1842,
+  "unique_speakers": 567,
+  "total_duration_seconds": 38405.78675000001,
+  "total_duration_hours": 10.668274097222223,
+  "subsets": [
+    "train",
+    "test"
+  ],
+  "created_from": "VoxPopuli English dataset",
+  "language": "en"
+}

@@ -1,0 +1,15 @@
+{
+  "dataset_name": "SPGISpeech MIA Dataset",
+  "source": "SPGISpeech",
+  "total_samples": 5000,
+  "train_samples": 2500,
+  "test_samples": 2500,
+  "audio_format": "wav",
+  "sampling_rate": 16000,
+  "language": "en",
+  "description": "SPGISpeech dataset formatted for MIA research with train/test splits",
+  "max_samples_per_split": {
+    "train": 2500,
+    "test": 2500
+  }
+}

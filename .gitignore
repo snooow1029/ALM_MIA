@@ -1,0 +1,109 @@
+__pycache__/
+.DS_Store
+core.*
+.cache/
+*.pyc
+
+# Local Python environments and scratch files.
+.venv/
+**/.venv/
+*.log
+*.backup
+*.bak
+
+# Local-only experiment families. Files stay on disk; they are not part of the
+# GitHub release surface for the MIA project.
+MIA_on_dataset/*.py
+!MIA_on_dataset/audio_mia.py
+!MIA_on_dataset/export_hf_datasets.py
+!MIA_on_dataset/sanitize_release_paths.py
+!MIA_on_dataset/run_two_stage_audio_mia_disentangle.py
+!MIA_on_dataset/run_two_stage_audio_mia_disentangle_mf3.py
+MIA_on_dataset/SMI/
+MIA_on_dataset/run_audio_mia.py
+MIA_on_dataset/run_audio_mia_batch.py
+MIA_on_dataset/run_audio_mia_gt_logits.py
+MIA_on_dataset/run_audio_smi*.py
+MIA_on_dataset/run_conflict_smi.py
+MIA_on_dataset/run_two_stage_audio_mia.py
+MIA_on_dataset/CONFLICT_SMI_README.md
+MIA_on_dataset/README_two_stage_mia.md
+MIA_on_dataset/TEXT_ONLY_BASELINE_README.md
+MIA_on_dataset/run_generate_tta.sh
+MIA_on_dataset/run_test_tangoflux.sh
+MIA_on_dataset/run_vector_c_inference.sh
+MIA_on_dataset/setup_tangoflux_env.sh
+MIA_on_dataset/comparison_output/
+MIA_on_dataset/smi_results.json
+MIA_on_dataset/mia_results/
+MIA_on_dataset/mia_analysis_output/
+MIA_on_dataset/multi_dataset_analysis_output/
+MIA_on_dataset/multi_dataset_length_analysis/
+MIA_on_dataset/heatmap_results/
+MIA_on_dataset/success_correlation_analysis/
+MIA_on_dataset/case_by_case_analysis/
+MIA_on_dataset/token_result/
+MIA_on_dataset/probing/
+MIA_on_dataset/mf3/
+MIA_on_dataset/voxpopuli
+MIA_on_dataset/voxpopuli_mia_dataset/
+dataset_inference_demo/
+golden_experiment_results/
+
+# Local-only two-stage result workspaces outside the release datasets.
+MIA_on_dataset/two_stage_mia_results/0_1/
+MIA_on_dataset/two_stage_mia_results/1_0/
+MIA_on_dataset/two_stage_mia_results/giga/
+MIA_on_dataset/two_stage_mia_results/libri_document/
+MIA_on_dataset/two_stage_mia_results/libri_paragraph/
+
+# Conditional analysis code is published; generated analyses are local.
+MIA_on_dataset/analysis/**
+!MIA_on_dataset/analysis/
+!MIA_on_dataset/analysis/*.py
+!MIA_on_dataset/analysis/*.sh
+
+# Publish only the acoustic feature tables and small metadata summaries from
+# local dataset workspaces. Audio and dataset manifests are exported to HF.
+MIA_on_dataset/data/**
+!MIA_on_dataset/data/
+!MIA_on_dataset/data/clotho_mia_dataset/
+!MIA_on_dataset/data/clotho_mia_dataset/acoustic_features.csv
+!MIA_on_dataset/data/clotho_mia_dataset/metadata.json
+!MIA_on_dataset/data/cochlscene_mia_dataset/
+!MIA_on_dataset/data/cochlscene_mia_dataset/acoustic_features.csv
+!MIA_on_dataset/data/cochlscene_mia_dataset/metadata.json
+!MIA_on_dataset/data/gigaspeech_mia_dataset/
+!MIA_on_dataset/data/gigaspeech_mia_dataset/acoustic_features.csv
+!MIA_on_dataset/data/gigaspeech_mia_dataset/metadata.json
+!MIA_on_dataset/data/librispeech_mia_dataset/
+!MIA_on_dataset/data/librispeech_mia_dataset/acoustic_features.csv
+!MIA_on_dataset/data/librispeech_mia_dataset/metadata.json
+!MIA_on_dataset/data/nsynth_mia_dataset/
+!MIA_on_dataset/data/nsynth_mia_dataset/acoustic_features.csv
+!MIA_on_dataset/data/nsynth_mia_dataset/metadata.json
+!MIA_on_dataset/data/spgispeech_mia_dataset/
+!MIA_on_dataset/data/spgispeech_mia_dataset/acoustic_features.csv
+!MIA_on_dataset/data/spgispeech_mia_dataset/metadata.json
+!MIA_on_dataset/data/tedlium_mia_dataset/
+!MIA_on_dataset/data/tedlium_mia_dataset/acoustic_features.csv
+!MIA_on_dataset/data/tedlium_mia_dataset/metadata.json
+!MIA_on_dataset/data/voxpopuli_mia_dataset/
+!MIA_on_dataset/data/voxpopuli_mia_dataset/acoustic_features.csv
+!MIA_on_dataset/data/voxpopuli_mia_dataset/metadata.json
+!MIA_on_dataset/data/voxpopuli_mia_dataset/summary.txt
+
+# Blind-baseline code used by conditional analysis is published. Token/SSL
+# baselines, model weights, cached features, and result folders are local.
+MIA_on_dataset/blind_baseline/**
+!MIA_on_dataset/blind_baseline/
+!MIA_on_dataset/blind_baseline/__init__.py
+!MIA_on_dataset/blind_baseline/utils.py
+!MIA_on_dataset/blind_baseline/run_metadata_baseline.py
+!MIA_on_dataset/blind_baseline/run_text_baseline.py
+!MIA_on_dataset/blind_baseline/run_acoustic_baseline.py
+!MIA_on_dataset/blind_baseline/run_all_baselines.py
+
+# Historical local dataset caches that were created beside MIA_on_dataset/data.
+MIA_on_dataset/gigaspeech_mia_datasete/
+MIA_on_dataset/TEDLIUM/

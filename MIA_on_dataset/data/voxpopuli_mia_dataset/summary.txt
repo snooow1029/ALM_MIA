@@ -1,0 +1,16 @@
+VoxPopuli MIA Dataset Summary
+==============================
+
+Total samples: 3842
+Train samples (members): 2000
+Test samples (non-members): 1842
+Unique speakers: 567
+Total duration: 38405.79 seconds (10.67 hours)
+Average duration: 10.00 seconds
+
+Files created:
+- Audio files: MIA_on_dataset/data/voxpopuli_mia_dataset/audio
+- MIA dataset JSON: MIA_on_dataset/data/voxpopuli_mia_dataset/mia_dataset.json
+- MIA dataset CSV: MIA_on_dataset/data/voxpopuli_mia_dataset/mia_dataset.csv
+- Metadata: MIA_on_dataset/data/voxpopuli_mia_dataset/metadata.json
+- Splits: MIA_on_dataset/data/voxpopuli_mia_dataset/splits

@@ -1,0 +1,13 @@
+{
+  "total_samples": 2000,
+  "train_samples": 1000,
+  "test_samples": 1000,
+  "members": 1000,
+  "non_members": 1000,
+  "unique_speakers": 254,
+  "subsets": [
+    "test-clean",
+    "train-clean-100"
+  ],
+  "created_from": "LibriSpeech test-clean and train-clean-100"
+}

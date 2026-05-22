@@ -1,0 +1,29 @@
+{
+  "dataset_name": "TEDLIUM MIA Dataset",
+  "source": "TEDLIUM Release 3",
+  "total_samples": 4469,
+  "train_samples": 3000,
+  "test_samples": 1469,
+  "audio_format": "wav",
+  "language": "en",
+  "description": "TEDLIUM dataset formatted for MIA research with train/test splits (no validation)",
+  "splits": {
+    "train": 3000,
+    "test": 1469
+  },
+  "fields": [
+    "id",
+    "audio_file",
+    "text",
+    "speaker_id",
+    "split",
+    "talk_id",
+    "duration",
+    "audio_path",
+    "is_member"
+  ],
+  "removed_fields": [
+    "source",
+    "sampling_rate"
+  ]
+}
