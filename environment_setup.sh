@@ -1,33 +1,38 @@
 #!/usr/bin/env bash
-# Set up the Audio Flamingo 3 MIA environment with uv and requirements.txt.
+# Set up the Audio Flamingo 3 MIA environment with conda + requirements.txt.
 #
 # Usage:
-#   ./environment_setup.sh            # create .venv and install everything
-#   ./environment_setup.sh /path/venv # use a custom virtualenv location
+#   ./environment_setup.sh            # create/use conda env "af3"
+#   ./environment_setup.sh myenv      # custom env name
 set -e
 
-VENV_DIR=${1:-.venv}
+ENV_NAME=${1:-af3}
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${SCRIPT_DIR}"
 
-# Install uv if it is not already available.
-if ! command -v uv >/dev/null 2>&1; then
-    echo "[INFO] Installing uv"
-    pip install uv
-fi
+# Required to use `conda activate` from a script.
+eval "$(conda shell.bash hook)"
 
-echo "[INFO] Creating virtual environment at ${VENV_DIR} (Python 3.10)"
-uv venv --python 3.10 "${VENV_DIR}"
-# shellcheck disable=SC1091
-source "${VENV_DIR}/bin/activate"
+if ! conda env list | awk '{print $1}' | grep -qx "${ENV_NAME}"; then
+    echo "[INFO] Creating conda env ${ENV_NAME} (Python 3.10)"
+    conda create -n "${ENV_NAME}" python=3.10 -y
+fi
+conda activate "${ENV_NAME}"
+
+# The CUDA toolkit provides nvcc / CUDA_HOME, which is needed to build flash-attn
+# and for DeepSpeed to probe the GPU.
+echo "[INFO] Installing CUDA toolkit"
+conda install -c nvidia cuda-toolkit -y
+export CUDA_HOME="${CONDA_PREFIX}"
 
 echo "[INFO] Installing requirements"
-uv pip install -r requirements.txt
+pip install --upgrade pip
+pip install -r requirements.txt
 
 # flash-attn builds against the torch installed above, so install it separately
 # with build isolation disabled.
 echo "[INFO] Installing flash-attn"
-uv pip install flash-attn==2.7.3 --no-build-isolation
+pip install flash-attn==2.7.3 --no-build-isolation
 
 # Optional: the backend training scripts expect patched DeepSpeed files. This is
 # not needed for the MIA pipeline. Enable with APPLY_DEEPSPEED_PATCH=1.
@@ -37,5 +42,6 @@ if [ "${APPLY_DEEPSPEED_PATCH:-0}" = "1" ]; then
     cp -rv ./llava/train/deepspeed_replace/* "${site_pkg_path}/deepspeed/"
 fi
 
-echo "[INFO] Done. Activate with: source ${VENV_DIR}/bin/activate"
-echo "[INFO] For the model runners, set CUDA_HOME to your CUDA toolkit."
+echo "[INFO] Done. Activate with: conda activate ${ENV_NAME}"
+echo "[INFO] CUDA_HOME is set to the conda prefix; re-export it in new shells:"
+echo "       export CUDA_HOME=\$CONDA_PREFIX"

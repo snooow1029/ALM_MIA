@@ -56,20 +56,24 @@ download.
 
 ## Setup
 
-Install the dependencies with [uv](https://github.com/astral-sh/uv) and
-`requirements.txt` (Python 3.10 recommended):
+Create a conda environment (Python 3.10) and install the dependencies from
+`requirements.txt`. Conda also provides the CUDA toolkit needed to build
+flash-attn and to let DeepSpeed probe the GPU:
 
 ```bash
-uv venv --python 3.10
-source .venv/bin/activate
-uv pip install -r requirements.txt
+conda create -n af3 python=3.10 -y
+conda activate af3
+conda install -c nvidia cuda-toolkit -y
+export CUDA_HOME=$CONDA_PREFIX
+
+pip install -r requirements.txt
 # flash-attn builds against the torch installed above, so install it after:
-uv pip install flash-attn==2.7.3 --no-build-isolation
+pip install flash-attn==2.7.3 --no-build-isolation
 ```
 
-`./environment_setup.sh` runs the same steps for you. For the model runners,
-set `CUDA_HOME` to your CUDA toolkit (e.g. `export CUDA_HOME=/usr/local/cuda`)
-so DeepSpeed can probe the GPU.
+`./environment_setup.sh [env-name]` runs the same steps for you (default env
+name `af3`). Remember to `export CUDA_HOME=$CONDA_PREFIX` in new shells before
+running the model runners.
 
 ## Data
 

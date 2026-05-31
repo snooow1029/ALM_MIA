@@ -1,18 +1,22 @@
 # Audio Flamingo 3 MIA release — Python dependencies.
 #
-# Install with uv (Python 3.10 recommended):
+# Install inside a conda environment (Python 3.10 recommended):
 #
-#   uv venv --python 3.10
-#   source .venv/bin/activate
-#   uv pip install -r requirements.txt
+#   conda create -n af3 python=3.10 -y
+#   conda activate af3
+#   conda install -c nvidia cuda-toolkit -y
+#   export CUDA_HOME=$CONDA_PREFIX
+#   pip install -r requirements.txt
 #   # flash-attn builds against the torch installed above, so install it after:
-#   uv pip install flash-attn==2.7.3 --no-build-isolation
+#   pip install flash-attn==2.7.3 --no-build-isolation
+#
+# Or just run ./environment_setup.sh, which performs all of the above.
 #
 # Notes:
 # - Versions are pinned to the tested Audio Flamingo 3 environment.
 # - torch==2.3.0 from PyPI is the CUDA 12.1 build on Linux x86_64.
-# - For the model runners, set CUDA_HOME to your CUDA toolkit so DeepSpeed can
-#   probe the GPU (e.g. export CUDA_HOME=/usr/local/cuda).
+# - The conda CUDA toolkit provides nvcc / CUDA_HOME, needed to build flash-attn
+#   and for DeepSpeed to probe the GPU.
 # - flash-attn is intentionally NOT listed here; see the comment above.
 
 # --- PyTorch ---
