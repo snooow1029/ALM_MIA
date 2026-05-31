@@ -4,6 +4,7 @@ Utility functions for blind baseline implementations
 """
 
 import os
+import sys
 import pandas as pd
 import librosa
 import numpy as np
@@ -13,6 +14,29 @@ import argparse
 
 
 MIA_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+if MIA_ROOT not in sys.path:
+    sys.path.insert(0, MIA_ROOT)
+from hf_data import resolve_data_file, localize_audio
+
+
+def _to_repo_relative(audio_path, dataset_dir):
+    """Prefix a manifest-relative audio path with its dataset directory.
+
+    Existing local or absolute paths are returned unchanged so a local mirror
+    keeps working; relative paths become resolvable against the data root / hub.
+    """
+    if not isinstance(audio_path, str):
+        return audio_path
+    if os.path.isabs(audio_path) or os.path.exists(audio_path):
+        return audio_path
+    # Already carries a dataset directory component (older repo-relative paths);
+    # leave it for localize_audio to map onto the data root.
+    if any(part.endswith("_mia_dataset") for part in audio_path.split("/")):
+        return audio_path
+    if audio_path.startswith(f"{dataset_dir}/"):
+        return audio_path
+    return f"{dataset_dir}/{audio_path}"
 
 
 def get_data_root():
@@ -42,12 +66,17 @@ def load_dataset(dataset_name, subdir=None):
     Returns:
         pd.DataFrame: Loaded dataset
     """
-    dataset_path = os.path.join(get_dataset_dir(dataset_name, subdir=subdir), "mia_dataset.csv")
-    
-    if not os.path.exists(dataset_path):
-        raise FileNotFoundError(f"Dataset not found at {dataset_path}")
-    
+    rel = f"{dataset_name}_mia_dataset"
+    if subdir:
+        rel = f"{rel}/{subdir}"
+    rel = f"{rel}/mia_dataset.csv"
+    dataset_path = resolve_data_file(rel)
+
     df = pd.read_csv(dataset_path)
+    # Normalize audio paths so they resolve against the data root / hub later.
+    if 'audio_path' in df.columns:
+        dataset_dir = f"{dataset_name}_mia_dataset"
+        df['audio_path'] = df['audio_path'].apply(lambda a: _to_repo_relative(a, dataset_dir))
     print(f"Loaded dataset with {len(df)} samples")
     print(f"Members: {df['is_member'].sum()}, Non-members: {(~df['is_member'].astype(bool)).sum()}")
     
@@ -76,12 +105,12 @@ def extract_metadata_features(df):
         char_count = len(text)
         
         # Audio-based features
-        audio_path = row['audio_path']
+        audio_path = localize_audio(row['audio_path'])
         try:
             # Get audio duration
             y, sr = librosa.load(audio_path, sr=None)
             duration_seconds = len(y) / sr
-            
+
             # Get file size
             file_size_bytes = os.path.getsize(audio_path)
         except Exception as e:
@@ -112,7 +141,7 @@ def extract_acoustic_features(audio_path):
     """
     try:
         # Load audio
-        y, sr = librosa.load(audio_path, sr=22050)
+        y, sr = librosa.load(localize_audio(audio_path), sr=22050)
         
         # MFCC features
         mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)

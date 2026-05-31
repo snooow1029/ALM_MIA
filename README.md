@@ -36,8 +36,11 @@ Not published to GitHub:
 - SMI-related code and outputs
 - local-only result directories not used in the release workflow
 
-Dataset manifests and audio are prepared for a separate Hugging Face dataset
-release rather than being versioned in GitHub.
+Dataset manifests and audio live in the Hugging Face dataset repository
+[`Snooow1029/MIA_LALM`](https://huggingface.co/datasets/Snooow1029/MIA_LALM)
+rather than being versioned in GitHub. The MIA scripts fetch them from the hub
+on demand (cached locally), so a fresh checkout works without a separate data
+download.
 
 ## Repository Layout
 
@@ -67,10 +70,14 @@ MIA_on_dataset/blind_baseline/
 MIA_on_dataset/analysis/
 ```
 
-You can override those paths with:
+Data is resolved through `MIA_on_dataset/hf_data.py`: a local file under
+`AUDIO_MIA_DATA_ROOT` or the repository `data/` directory is used if present,
+otherwise it is downloaded from the Hugging Face repository above
+(`pip install huggingface_hub`). You can override the defaults with:
 
 ```bash
-export AUDIO_MIA_DATA_ROOT=/path/to/mia-datasets
+export AUDIO_MIA_DATA_ROOT=/path/to/mia-datasets        # local mirror, skips the hub
+export AUDIO_MIA_HF_REPO=org/your-mirror                # alternate hub repo
 export AUDIO_MIA_BASELINE_ROOT=/path/to/blind-baseline-artifacts
 export AUDIO_MIA_ANALYSIS_ROOT=/path/to/analysis-output
 ```

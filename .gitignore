@@ -15,6 +15,7 @@ core.*
 # GitHub release surface for the MIA project.
 MIA_on_dataset/*.py
 !MIA_on_dataset/audio_mia.py
+!MIA_on_dataset/hf_data.py
 !MIA_on_dataset/export_hf_datasets.py
 !MIA_on_dataset/sanitize_release_paths.py
 !MIA_on_dataset/run_two_stage_audio_mia_disentangle.py

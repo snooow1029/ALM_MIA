@@ -78,19 +78,29 @@ The analysis pipeline depends on three baseline families released under
 
 ## Data Layout
 
-GitHub only keeps small dataset-side metadata under `data/`, such as:
+Audio files and dataset manifests are released through the Hugging Face dataset
+repository [`Snooow1029/MIA_LALM`](https://huggingface.co/datasets/Snooow1029/MIA_LALM),
+laid out as `<dataset>_mia_dataset/<manifest>.json` plus audio relative to each
+dataset directory. GitHub only keeps small dataset-side metadata under `data/`
+(`acoustic_features.csv`, `metadata.json`, selected summary files).
 
-- `acoustic_features.csv`
-- `metadata.json`
-- selected summary files
+The runners, blind baselines, and analysis scripts resolve data through
+`hf_data.py` with this policy:
 
-Audio files and dataset manifests are prepared for Hugging Face dataset release
-instead of being committed to GitHub.
+1. if `AUDIO_MIA_DATA_ROOT` is set and the file exists there, use it;
+2. else, if the file exists under the repository `data/` directory, use it;
+3. otherwise download it from the hub on demand (cached by `huggingface_hub`).
 
-If you are working outside the original local layout, override paths with:
+So a fresh checkout fetches manifests and audio automatically — `--dataset-path`
+accepts a hub-relative path such as
+`voxpopuli_mia_dataset/tts_61_2/tts_dataset.json`. Install the dependency with
+`pip install huggingface_hub`.
+
+To point at a local mirror or a different repository instead:
 
 ```bash
-export AUDIO_MIA_DATA_ROOT=/path/to/mia-datasets
+export AUDIO_MIA_DATA_ROOT=/path/to/mia-datasets        # local mirror, skips the hub
+export AUDIO_MIA_HF_REPO=org/your-mirror                # alternate hub repo
 export AUDIO_MIA_BASELINE_ROOT=/path/to/blind-baseline-artifacts
 export AUDIO_MIA_ANALYSIS_ROOT=/path/to/analysis-output
 ```

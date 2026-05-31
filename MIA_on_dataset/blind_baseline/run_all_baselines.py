@@ -28,6 +28,7 @@ from blind_baseline.utils import (
     get_dataset_dir,
     load_dataset,
 )
+from hf_data import resolve_data_file
 
 # Import the three baseline modules
 from blind_baseline.run_metadata_baseline import run_metadata_baseline_kfold
@@ -87,13 +88,16 @@ def run_metric_based_baselines_kfold(dataset_name, n_splits=5, subdir=None):
     metadata_feature_names = ['word_count', 'char_count', 'duration_seconds', 'file_size_bytes']
     
     # Load acoustic features
-    features_path = os.path.join(get_dataset_dir(dataset_name, subdir=subdir), "acoustic_features.csv")
-    
-    if not os.path.exists(features_path):
-        print(f"Warning: Acoustic features not found at {features_path}")
-        acoustic_df = None
-    else:
+    rel = f"{dataset_name}_mia_dataset"
+    if subdir:
+        rel = f"{rel}/{subdir}"
+    rel = f"{rel}/acoustic_features.csv"
+    try:
+        features_path = resolve_data_file(rel)
         acoustic_df = pd.read_csv(features_path)
+    except Exception as e:
+        print(f"Warning: Acoustic features not found for {dataset_name} ({rel}): {e}")
+        acoustic_df = None
     
     y = metadata_features_df['is_member'].values
     

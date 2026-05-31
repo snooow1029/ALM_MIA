@@ -51,6 +51,7 @@ from audio_mia import (
     audio_max_renyi_k,
     audio_perturbation_ratio
 )
+from hf_data import resolve_manifest, localize_audio, dataset_dir_name
 
 def get_processing_signature(metrics, use_logits, disentangle_mode):
     """Generate a signature for the current processing configuration"""
@@ -714,17 +715,21 @@ def main():
     # Load dataset
     # print("📂 Loading dataset...")
     
+    # Resolve the manifest locally or from the Hugging Face dataset repo.
+    manifest_path = resolve_manifest(args.dataset_path)
+    dataset_dir = dataset_dir_name(args.dataset_path) or dataset_dir_name(manifest_path)
+
     # Try different dataset formats
-    if os.path.isfile(args.dataset_path):
-        if args.dataset_path.endswith('.csv'):
-            df = pd.read_csv(args.dataset_path)
-        elif args.dataset_path.endswith('.json'):
-            df = pd.read_json(args.dataset_path)
+    if os.path.isfile(manifest_path):
+        if manifest_path.endswith('.csv'):
+            df = pd.read_csv(manifest_path)
+        elif manifest_path.endswith('.json'):
+            df = pd.read_json(manifest_path)
         else:
-            raise ValueError(f"Unsupported file format: {args.dataset_path}")
+            raise ValueError(f"Unsupported file format: {manifest_path}")
     else:
         # Try to load as a dataset directory
-        csv_file = os.path.join(args.dataset_path, "mia_dataset.csv")
+        csv_file = os.path.join(manifest_path, "mia_dataset.csv")
         if os.path.exists(csv_file):
             df = pd.read_csv(csv_file)
         else:
@@ -851,9 +856,9 @@ def main():
         start_idx = batch_idx * args.batch_size
         end_idx = min(start_idx + args.batch_size, len(audio_paths))
         
-        # Prepare batch data
+        # Prepare batch data (localize audio from the hub lazily, per batch)
         batch_data = {
-            "audio_paths": audio_paths[start_idx:end_idx],
+            "audio_paths": [localize_audio(p, dataset_dir) for p in audio_paths[start_idx:end_idx]],
             "text_prompts": text_prompts[start_idx:end_idx],
             "ground_truth_texts": ground_truth_texts[start_idx:end_idx] if ground_truth_texts is not None else None,
             "is_member_list": is_member_list[start_idx:end_idx] if is_member_list is not None else None

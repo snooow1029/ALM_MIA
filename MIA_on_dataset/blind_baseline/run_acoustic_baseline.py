@@ -19,6 +19,7 @@ from sklearn.impute import SimpleImputer
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from blind_baseline.utils import split_data, evaluate_model, create_argument_parser, get_dataset_dir
+from hf_data import resolve_data_file
 from sklearn.model_selection import KFold
 from sklearn.metrics import roc_auc_score, roc_curve
 
@@ -59,13 +60,17 @@ def load_acoustic_features(dataset_name, subdir=None):
     Returns:
         pd.DataFrame: DataFrame with acoustic features
     """
-    features_path = os.path.join(get_dataset_dir(dataset_name, subdir=subdir), "acoustic_features.csv")
-    
-    if not os.path.exists(features_path):
-        print(f"Acoustic features not found at {features_path}")
+    rel = f"{dataset_name}_mia_dataset"
+    if subdir:
+        rel = f"{rel}/{subdir}"
+    rel = f"{rel}/acoustic_features.csv"
+    try:
+        features_path = resolve_data_file(rel)
+    except Exception as e:
+        print(f"Acoustic features not found for {dataset_name} ({rel}): {e}")
         print("Please run extract_acoustic_features.py first to extract features.")
         sys.exit(1)
-    
+
     df = pd.read_csv(features_path)
     print(f"Loaded acoustic features for {len(df)} samples")
     
