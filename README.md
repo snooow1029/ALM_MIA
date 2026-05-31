@@ -102,16 +102,19 @@ thousands of audio files, so download per dataset family with Xet disabled and
 while logged in to avoid HTTP 429 rate limits:
 
 ```bash
+export DATA_DIR=/abs/path/to/mia-datasets   # set to a real, writable directory
+mkdir -p "$DATA_DIR"
+
 hf auth login                       # authenticated requests have higher limits
 export HF_HUB_DISABLE_XET=1         # avoids a per-file token request
 
 # Download one family at a time into the same local directory:
 for ds in voxpopuli spgispeech gigaspeech librispeech tedlium clotho cochlscene nsynth; do
   hf download Snooow1029/MIA_LALM --repo-type dataset \
-    --include "${ds}_mia_dataset/*" --local-dir /path/to/mia-datasets
+    --include "${ds}_mia_dataset/*" --local-dir "$DATA_DIR"
 done
 
-export AUDIO_MIA_DATA_ROOT=/path/to/mia-datasets
+export AUDIO_MIA_DATA_ROOT="$DATA_DIR"
 ```
 
 If you still hit a 429, wait a few minutes (the limit is a rolling 5-minute
