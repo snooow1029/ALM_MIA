@@ -52,10 +52,25 @@ def unique_paths(paths: Iterable[Path]) -> List[Path]:
     return unique
 
 
-def export_audio_path(value: str, dataset_dir: Path, export_dir: Path, copy_audio: bool = True) -> str:
+def resolve_audio_source(value: str, dataset_dir: Path) -> Path:
     source_path = Path(value)
-    if not source_path.is_absolute():
-        source_path = dataset_dir / source_path
+    if source_path.is_absolute():
+        return source_path
+
+    repo_root = dataset_dir.parents[2]
+    candidates = [
+        dataset_dir / source_path,
+        repo_root / source_path,
+        source_path,
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    return candidates[0]
+
+
+def export_audio_path(value: str, dataset_dir: Path, export_dir: Path, copy_audio: bool = True) -> str:
+    source_path = resolve_audio_source(value, dataset_dir)
 
     if not source_path.exists() or source_path.suffix.lower() not in AUDIO_SUFFIXES:
         return value

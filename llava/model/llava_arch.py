@@ -309,10 +309,11 @@ class LlavaMetaForCausalLM(ABC):
 
         # -------------------------------- #
         num_audio_tokens = torch.stack(media_meta["sound_embed_masks"], dim=0).sum(-1)
-        num_audio_tokens = torch.tensor([round(int(x) / 10) * 10 for x in num_audio_tokens])            
+        # Flatten the tensor and convert each element properly
+        num_audio_tokens_flat = num_audio_tokens.flatten()
+        num_audio_tokens = torch.tensor([round(x.item() / 10) * 10 for x in num_audio_tokens_flat])               
         num_audios = len(media_embeds['sound']) # length of queue is the number of audios we have in total
         max_audio_tokens, embed_dim = media_embeds['sound'][0].shape
-       
 
         audio_features_mask = torch.arange(max_audio_tokens).expand(num_audios, max_audio_tokens).to(
             num_audio_tokens.device
@@ -359,6 +360,21 @@ class LlavaMetaForCausalLM(ABC):
         # Calculate new positions for text tokens in merged audio-text sequence.
         # `special_audio_token_mask` identifies audio tokens. Each audio token will be replaced by `audio_feat_lengths - 1` text tokens.
         # `torch.cumsum` computes how each audio token shifts subsequent text token positions.
+        
+        # Debug information
+        # print(f"Debug: batch_size = {batch_size}")
+        # print(f"Debug: input_ids.shape = {input_ids.shape}")
+        # print(f"Debug: special_audio_token_mask.shape = {special_audio_token_mask.shape}")
+        # print(f"Debug: special_audio_token_mask.sum() = {special_audio_token_mask.sum()}")
+        # print(f"Debug: num_audio_tokens.shape = {num_audio_tokens.shape}")
+        # print(f"Debug: num_audio_tokens = {num_audio_tokens}")
+        # print(f"Debug: num_special_audio_tokens = {num_special_audio_tokens}")
+        
+        batch_indices_audio, seq_indices_audio = torch.where(special_audio_token_mask)
+        # print(f"Debug: batch_indices_audio = {batch_indices_audio}")
+        # print(f"Debug: seq_indices_audio = {seq_indices_audio}")
+        # print(f"Debug: len(batch_indices_audio) = {len(batch_indices_audio)}")
+        
         token_placeholder_num = torch.zeros_like(input_ids)
         token_placeholder_num[special_audio_token_mask] = num_audio_tokens.long() - 1
         token_placeholder_num = token_placeholder_num + 1

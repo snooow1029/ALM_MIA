@@ -38,7 +38,8 @@ import soundfile as sf
 from librosa import resample as librosa_resample
 import whisper
 import random
-from pytorchvideo.data.clip_sampling import ConstantClipsPerVideoSampler, UniformClipSampler
+# pytorchvideo import removed to avoid pulling in cv2 at load time (NumPy 2 / OpenCV compat);
+# import locally where needed (e.g. video clip sampling).
 DEFAULT_AUDIO_FRAME_SHIFT_MS = 10  # in milliseconds
 def get_frame_from_vcap(vidcap, num_frames=10, max_fps=0.0, fps=None, frame_count=None, video_file_name=None):
     import cv2
