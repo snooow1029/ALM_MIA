@@ -1,0 +1,70 @@
+# Audio Flamingo 3 MIA release — Python dependencies.
+#
+# Install with uv (Python 3.10 recommended):
+#
+#   uv venv --python 3.10
+#   source .venv/bin/activate
+#   uv pip install -r requirements.txt
+#   # flash-attn builds against the torch installed above, so install it after:
+#   uv pip install flash-attn==2.7.3 --no-build-isolation
+#
+# Notes:
+# - Versions are pinned to the tested Audio Flamingo 3 environment.
+# - torch==2.3.0 from PyPI is the CUDA 12.1 build on Linux x86_64.
+# - For the model runners, set CUDA_HOME to your CUDA toolkit so DeepSpeed can
+#   probe the GPU (e.g. export CUDA_HOME=/usr/local/cuda).
+# - flash-attn is intentionally NOT listed here; see the comment above.
+
+# --- PyTorch ---
+torch==2.3.0
+torchvision==0.18.0
+
+# --- Transformers stack ---
+transformers==4.46.0
+tokenizers==0.20.3
+sentencepiece==0.1.99
+accelerate==0.34.2
+peft==0.14.0
+bitsandbytes==0.43.2
+huggingface_hub==0.36.1
+datasets==2.14.7
+deepspeed==0.15.4
+
+# --- Audio Flamingo 3 / NVILA backend ---
+einops==0.6.1
+einops-exts==0.0.4
+timm==0.9.12
+decord==0.6.0
+pytorchvideo==0.1.5
+ring_flash_attn==0.1.1
+s2wrapper @ git+https://github.com/bfshi/scaling_on_scales
+tyro==0.9.27
+loguru==0.7.3
+hydra-core==1.3.2
+xgrammar==0.1.22
+shortuuid==1.0.13
+fire==0.7.0
+webdataset==0.2.86
+protobuf==3.20.3
+opencv-python-headless==4.8.0.76
+
+# --- Audio I/O and ASR utilities ---
+librosa==0.11.0
+soundfile==0.13.1
+openai-whisper==20250625
+ftfy==6.3.1
+jiwer==4.0.0
+kaldiio==2.18.1
+pydub==0.25.1
+
+# --- Scientific computing and analysis ---
+numpy==1.26.4
+scipy==1.15.3
+pandas==2.3.1
+scikit-learn==1.7.2
+matplotlib==3.10.5
+seaborn==0.13.2
+tqdm
+
+# --- Misc ---
+nltk==3.3

@@ -56,11 +56,20 @@ download.
 
 ## Setup
 
-The backend environment is still initialized through the original setup script:
+Install the dependencies with [uv](https://github.com/astral-sh/uv) and
+`requirements.txt` (Python 3.10 recommended):
 
 ```bash
-./environment_setup.sh af3
+uv venv --python 3.10
+source .venv/bin/activate
+uv pip install -r requirements.txt
+# flash-attn builds against the torch installed above, so install it after:
+uv pip install flash-attn==2.7.3 --no-build-isolation
 ```
+
+`./environment_setup.sh` runs the same steps for you. For the model runners,
+set `CUDA_HOME` to your CUDA toolkit (e.g. `export CUDA_HOME=/usr/local/cuda`)
+so DeepSpeed can probe the GPU.
 
 Some release utilities assume the repository layout below unless overridden:
 

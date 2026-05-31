@@ -3,9 +3,17 @@ import zlib
 import tqdm
 import json
 import os
+import sys
 import numpy as np
 from typing import List, Dict, Any, Union
 from collections import defaultdict
+
+# Make the Audio Flamingo backend (`llava`) importable without installing the
+# repository as a package, so a plain `uv pip install -r requirements.txt` is
+# enough. The backend lives at the repository root (the parent of this dir).
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
 
 loss_fct = torch.nn.CrossEntropyLoss(reduction="none")
 
