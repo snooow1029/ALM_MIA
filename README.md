@@ -92,14 +92,30 @@ stored relative to each dataset directory. Resolution is handled by
 2. a local file under the repository `MIA_on_dataset/data/` directory;
 3. otherwise, the file is downloaded from the hub.
 
-So a fresh checkout works out of the box. To prepare a local mirror instead
-(e.g. for offline runs), download the dataset repository and point
-`AUDIO_MIA_DATA_ROOT` at it:
+So a fresh checkout works out of the box. The loader already disables the Xet
+backend and retries on rate limits, so lazy downloads stay under Hugging Face's
+API quota.
+
+To prepare a local mirror instead (e.g. for offline runs), download the dataset
+repository and point `AUDIO_MIA_DATA_ROOT` at it. The repository holds tens of
+thousands of audio files, so download per dataset family with Xet disabled and
+while logged in to avoid HTTP 429 rate limits:
 
 ```bash
-hf download Snooow1029/MIA_LALM --repo-type dataset --local-dir /path/to/mia-datasets
+hf auth login                       # authenticated requests have higher limits
+export HF_HUB_DISABLE_XET=1         # avoids a per-file token request
+
+# Download one family at a time into the same local directory:
+for ds in voxpopuli spgispeech gigaspeech librispeech tedlium clotho cochlscene nsynth; do
+  hf download Snooow1029/MIA_LALM --repo-type dataset \
+    --include "${ds}_mia_dataset/*" --local-dir /path/to/mia-datasets
+done
+
 export AUDIO_MIA_DATA_ROOT=/path/to/mia-datasets
 ```
+
+If you still hit a 429, wait a few minutes (the limit is a rolling 5-minute
+window) and re-run — already-downloaded files are skipped.
 
 Other optional overrides:
 

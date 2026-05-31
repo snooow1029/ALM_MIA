@@ -20,6 +20,7 @@ Set ``AUDIO_MIA_HF_REPO`` to point at a different repository, or
 """
 
 import os
+import time
 from functools import lru_cache
 from pathlib import Path
 
@@ -27,6 +28,12 @@ MIA_ROOT = Path(__file__).resolve().parent
 
 HF_REPO_ID = os.environ.get("AUDIO_MIA_HF_REPO", "Snooow1029/MIA_LALM")
 HF_REPO_TYPE = os.environ.get("AUDIO_MIA_HF_REPO_TYPE", "dataset")
+
+# This dataset has tens of thousands of small files. The Xet backend issues an
+# extra per-file token request, which trips Hugging Face's API rate limit (HTTP
+# 429) during bulk or lazy downloads. Default to the plain CDN download path,
+# which is far easier on the rate limit. Override by exporting HF_HUB_DISABLE_XET=0.
+os.environ.setdefault("HF_HUB_DISABLE_XET", "1")
 
 
 def _local_roots():
@@ -42,8 +49,21 @@ def _local_roots():
 @lru_cache(maxsize=None)
 def _hf_download(rel_path):
     from huggingface_hub import hf_hub_download
+    from huggingface_hub.errors import HfHubHTTPError
 
-    return hf_hub_download(repo_id=HF_REPO_ID, filename=rel_path, repo_type=HF_REPO_TYPE)
+    delay = 5.0
+    for attempt in range(6):
+        try:
+            return hf_hub_download(repo_id=HF_REPO_ID, filename=rel_path, repo_type=HF_REPO_TYPE)
+        except HfHubHTTPError as exc:
+            status = getattr(getattr(exc, "response", None), "status_code", None)
+            if status == 429 and attempt < 5:
+                # Rate limited; back off and retry (the limit is a 5-minute window).
+                print(f"[hf_data] rate limited (429), retrying in {delay:.0f}s: {rel_path}")
+                time.sleep(delay)
+                delay = min(delay * 2, 120)
+                continue
+            raise
 
 
 def resolve_data_file(rel_path):
