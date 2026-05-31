@@ -71,21 +71,35 @@ uv pip install flash-attn==2.7.3 --no-build-isolation
 set `CUDA_HOME` to your CUDA toolkit (e.g. `export CUDA_HOME=/usr/local/cuda`)
 so DeepSpeed can probe the GPU.
 
-Some release utilities assume the repository layout below unless overridden:
+## Data
 
-```text
-MIA_on_dataset/data/
-MIA_on_dataset/blind_baseline/
-MIA_on_dataset/analysis/
-```
+You do not need to download or prepare the datasets manually. Manifests and
+audio are released in the Hugging Face dataset repository
+[`Snooow1029/MIA_LALM`](https://huggingface.co/datasets/Snooow1029/MIA_LALM)
+and fetched automatically the first time a script needs them (then cached by
+`huggingface_hub`). Just pass a hub-relative manifest path, for example
+`voxpopuli_mia_dataset/tts_61_2/tts_dataset.json`.
 
-Data is resolved through `MIA_on_dataset/hf_data.py`: a local file under
-`AUDIO_MIA_DATA_ROOT` or the repository `data/` directory is used if present,
-otherwise it is downloaded from the Hugging Face repository above
-(`pip install huggingface_hub`). You can override the defaults with:
+The repository is laid out as `<dataset>_mia_dataset/<manifest>.json` with audio
+stored relative to each dataset directory. Resolution is handled by
+`MIA_on_dataset/hf_data.py` in this order:
+
+1. a local file under `AUDIO_MIA_DATA_ROOT`, if that variable is set;
+2. a local file under the repository `MIA_on_dataset/data/` directory;
+3. otherwise, the file is downloaded from the hub.
+
+So a fresh checkout works out of the box. To prepare a local mirror instead
+(e.g. for offline runs), download the dataset repository and point
+`AUDIO_MIA_DATA_ROOT` at it:
 
 ```bash
-export AUDIO_MIA_DATA_ROOT=/path/to/mia-datasets        # local mirror, skips the hub
+hf download Snooow1029/MIA_LALM --repo-type dataset --local-dir /path/to/mia-datasets
+export AUDIO_MIA_DATA_ROOT=/path/to/mia-datasets
+```
+
+Other optional overrides:
+
+```bash
 export AUDIO_MIA_HF_REPO=org/your-mirror                # alternate hub repo
 export AUDIO_MIA_BASELINE_ROOT=/path/to/blind-baseline-artifacts
 export AUDIO_MIA_ANALYSIS_ROOT=/path/to/analysis-output
@@ -100,7 +114,7 @@ AF3 example:
 ```bash
 cd MIA_on_dataset
 python run_two_stage_audio_mia_disentangle.py \
-    --dataset-path /path/to/voxpopuli/tts_61_2/tts_dataset.json \
+    --dataset-path voxpopuli_mia_dataset/tts_61_2/tts_dataset.json \
     --disentangle-mode original \
     --output-dir two_stage_mia_results/voxpopuli/prompt_a/tts_61_2 \
     --save-lalm-outputs
@@ -111,7 +125,7 @@ MF3 example:
 ```bash
 cd MIA_on_dataset
 python run_two_stage_audio_mia_disentangle_mf3.py \
-    --dataset-path /path/to/spgispeech/tts_61/tts_dataset.json \
+    --dataset-path spgispeech_mia_dataset/tts_61_2/tts_dataset.json \
     --disentangle-mode noise \
     --output-dir two_stage_mia_results/spgispeech/prompt_a/mf3/tts_61 \
     --save-lalm-outputs

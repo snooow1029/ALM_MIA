@@ -35,7 +35,7 @@ AF3 example:
 
 ```bash
 python run_two_stage_audio_mia_disentangle.py \
-    --dataset-path /path/to/voxpopuli/tts_61_2/tts_dataset.json \
+    --dataset-path voxpopuli_mia_dataset/tts_61_2/tts_dataset.json \
     --disentangle-mode original \
     --output-dir two_stage_mia_results/voxpopuli/prompt_a/tts_61_2 \
     --save-lalm-outputs
@@ -45,9 +45,9 @@ MF3 example:
 
 ```bash
 python run_two_stage_audio_mia_disentangle_mf3.py \
-    --dataset-path /path/to/spgispeech/tts_61/tts_dataset.json \
+    --dataset-path spgispeech_mia_dataset/tts_61_2/tts_dataset.json \
     --disentangle-mode noise \
-    --output-dir two_stage_mia_results/spgispeech/prompt_a/mf3/tts_61 \
+    --output-dir two_stage_mia_results/spgispeech/prompt_a/mf3/tts_61_2 \
     --save-lalm-outputs
 ```
 
