@@ -9,6 +9,8 @@
 #   pip install -r requirements.txt
 #   # flash-attn builds against the torch installed above, so install it after:
 #   pip install flash-attn==2.7.3 --no-build-isolation
+#   # triton 3.1.0 must also be installed after torch (see note below):
+#   pip install triton==3.1.0
 #
 # Or just run ./environment_setup.sh, which performs all of the above.
 #
@@ -18,10 +20,21 @@
 # - The conda CUDA toolkit provides nvcc / CUDA_HOME, needed to build flash-attn
 #   and for DeepSpeed to probe the GPU.
 # - flash-attn is intentionally NOT listed here; see the comment above.
+# - triton==3.1.0 is also installed separately, AFTER torch: torch==2.3.0
+#   hard-pins triton==2.3.0, so co-resolving them fails. Installing triton last
+#   only prints a benign "torch requires triton==2.3.0" warning. It is required
+#   because llava/model/__init__.py imports the FP8 configs at module load, which
+#   need triton.language.extra.cuda.libdevice (a triton 3.x path).
 
 # --- PyTorch ---
 torch==2.3.0
 torchvision==0.18.0
+# NOTE: triton is intentionally NOT pinned here. torch==2.3.0 hard-pins
+# triton==2.3.0, but llava/model/__init__.py eagerly imports the FP8 quantization
+# configs, which need triton.language.extra.cuda.libdevice — a path that only
+# exists in triton 3.x. Listing triton==3.1.0 alongside torch==2.3.0 makes
+# `pip install -r` fail with ResolutionImpossible, so (like flash-attn) it is
+# installed as a separate post-install step; see the header and environment_setup.sh.
 
 # --- Transformers stack ---
 transformers==4.46.0
@@ -30,7 +43,7 @@ sentencepiece==0.1.99
 accelerate==0.34.2
 peft==0.14.0
 bitsandbytes==0.43.2
-huggingface_hub==0.36.1
+huggingface_hub==0.36.2
 datasets==2.14.7
 deepspeed==0.15.4
 
