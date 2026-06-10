@@ -90,33 +90,27 @@ without rerunning the models.
 
 ## Data
 
-Manifests and audio are fetched from the Hugging Face dataset repository on
-first use, so a fresh checkout works out of the box — just pass a hub-relative
-manifest path such as `voxpopuli_mia_dataset/tts_61_2/tts_dataset.json`. The
-loader (`MIA_on_dataset/hf_data.py`) resolves each file in order: a local file
-under `$AUDIO_MIA_DATA_ROOT`, then under `MIA_on_dataset/data/`, then the hub.
-
-For offline runs, mirror the dataset locally and point `AUDIO_MIA_DATA_ROOT` at
-it. The repository holds tens of thousands of audio files, so download one
-family at a time with Xet disabled and while logged in to avoid HTTP 429:
+Audio is distributed as one zstd-compressed tar per dataset family. A few large
+archives download far faster than the ~90k individual audio files. Download the
+families you need into the repo's `MIA_on_dataset/data/` directory and extract
+them there — each archive expands to `data/<family>_mia_dataset/`, which the
+loader (`MIA_on_dataset/hf_data.py`) picks up automatically, so no environment
+variable is needed:
 
 ```bash
-export DATA_DIR=/abs/path/to/mia-datasets   # a real, writable directory
-mkdir -p "$DATA_DIR"
-
-hf auth login                       # authenticated requests have higher limits
-export HF_HUB_DISABLE_XET=1         # avoids a per-file token request
-
+cd MIA_on_dataset
 for ds in voxpopuli spgispeech gigaspeech librispeech tedlium clotho cochlscene nsynth; do
-  hf download Snooow1029/MIA_LALM --repo-type dataset \
-    --include "${ds}_mia_dataset/*" --local-dir "$DATA_DIR"
+  hf download Snooow1029/MIA_LALM "${ds}_mia_dataset.tar.zst" \
+    --repo-type dataset --local-dir data
+  tar --zstd -xf "data/${ds}_mia_dataset.tar.zst" -C data
+  rm "data/${ds}_mia_dataset.tar.zst"
 done
-
-export AUDIO_MIA_DATA_ROOT="$DATA_DIR"
 ```
 
-If you still hit a 429, wait a few minutes (the limit is a rolling 5-minute
-window) and re-run — already-downloaded files are skipped.
+Each dataset then lives under `MIA_on_dataset/data/<family>_mia_dataset/`,
+matching the manifest paths the runners expect (e.g.
+`voxpopuli_mia_dataset/tts_61_2/tts_dataset.json`). To keep the data elsewhere,
+extract anywhere and `export AUDIO_MIA_DATA_ROOT=/that/path` instead.
 
 ## Cite as
 

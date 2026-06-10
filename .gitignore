@@ -18,6 +18,7 @@ MIA_on_dataset/*.py
 !MIA_on_dataset/hf_data.py
 !MIA_on_dataset/export_hf_datasets.py
 !MIA_on_dataset/sanitize_release_paths.py
+!MIA_on_dataset/upload_hf_archives.py
 !MIA_on_dataset/run_two_stage_audio_mia_disentangle.py
 !MIA_on_dataset/run_two_stage_audio_mia_disentangle_mf3.py
 MIA_on_dataset/SMI/
@@ -111,3 +112,8 @@ MIA_on_dataset/TEDLIUM/
 
 # Local HF dataset mirror download (large; fetched on demand, not versioned).
 MIA_on_dataset/data_test/
+
+# Generated HF upload artifacts (per-family tar.zst archives + staging folder).
+MIA_on_dataset/hf_archives/
+MIA_on_dataset/hf_upload_stage/
+pack.log
