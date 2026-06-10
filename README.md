@@ -2,9 +2,6 @@
 
 [![arXiv](https://img.shields.io/badge/arXiv-2603.28378-b31b1b.svg)](https://arxiv.org/abs/2603.28378)
 [![Dataset on HF](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-yellow)](https://huggingface.co/datasets/Snooow1029/MIA_LALM)
-[![License](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
-
-Jia-Kai Dong, Yu-Xiang Lin, Hung-Yi Lee
 
 ## Overview
 
