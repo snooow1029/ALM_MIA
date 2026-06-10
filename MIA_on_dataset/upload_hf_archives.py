@@ -49,23 +49,24 @@ expect.
 
 ## Download
 
-```bash
-export DATA_DIR=/abs/path/to/mia-datasets   # a real, writable directory
-mkdir -p "$DATA_DIR"
+With the [code repository](https://github.com/snooow1029/ALM_MIA) cloned,
+download each family into ``MIA_on_dataset/data/`` and extract it there — the
+loader picks it up automatically, no environment variable needed:
 
-# Grab the families you need (or all of them):
+```bash
+cd MIA_on_dataset
 for ds in voxpopuli spgispeech gigaspeech librispeech tedlium clotho cochlscene nsynth; do
   hf download Snooow1029/MIA_LALM "${ds}_mia_dataset.tar.zst" \\
-    --repo-type dataset --local-dir "$DATA_DIR"
-  tar --zstd -xf "$DATA_DIR/${ds}_mia_dataset.tar.zst" -C "$DATA_DIR"
-  rm "$DATA_DIR/${ds}_mia_dataset.tar.zst"
+    --repo-type dataset --local-dir data
+  tar --zstd -xf "data/${ds}_mia_dataset.tar.zst" -C data
+  rm "data/${ds}_mia_dataset.tar.zst"
 done
-
-export AUDIO_MIA_DATA_ROOT="$DATA_DIR"
 ```
 
-The attack runners then resolve every manifest and audio file from
-``$AUDIO_MIA_DATA_ROOT`` locally. See the code repository for the full pipeline.
+Each dataset then lives under ``MIA_on_dataset/data/<family>_mia_dataset/``,
+matching the manifest paths the runners expect (e.g.
+``voxpopuli_mia_dataset/tts_61_2/tts_dataset.json``). To keep the data
+elsewhere, extract anywhere and ``export AUDIO_MIA_DATA_ROOT=/that/path``.
 
 ## Layout
 
