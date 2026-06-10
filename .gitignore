@@ -108,3 +108,6 @@ MIA_on_dataset/blind_baseline/**
 # Historical local dataset caches that were created beside MIA_on_dataset/data.
 MIA_on_dataset/gigaspeech_mia_datasete/
 MIA_on_dataset/TEDLIUM/
+
+# Local HF dataset mirror download (large; fetched on demand, not versioned).
+MIA_on_dataset/data_test/
