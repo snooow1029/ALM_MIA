@@ -1,0 +1,1187 @@
+/* Academic project page theme.
+   Look adapted from the Academic Project Page Template (github.com/eliahuhorwitz/Academic-project-page-template),
+   itself adapted from Nerfies (github.com/nerfies/nerfies.github.io); both CC BY-SA 4.0.
+   Changes from APT: AA contrast for every text colour, motion behind prefers-reduced-motion,
+   heading accent bar follows the heading's alignment, no floating control over the text being read on phones,
+   an accessible carousel without jQuery or bulma-carousel. See references/style-fidelity.md. */
+
+:root {
+  /* The palette. A re-theme is an override block of these tokens and nothing else (references/style-fidelity.md).
+     Every colour below is used by name; no component rule carries a literal colour. */
+  --primary-color: #2563eb;        /* 5.2:1 on white; the accent: author and footer links, focus rings, hover fills, copy button */
+  --primary-hover: #1d4ed8;
+  --on-primary: #ffffff;           /* text on a --primary-color or --primary-hover fill; 5.2:1 here, pick dark text for a light accent */
+  --accent-color: #0ea5e9;         /* decorative only, never text */
+  --text-primary: #1e293b;
+  --text-secondary: #475569;       /* APT #64748b is 4.3:1 on #f1f5f9; this is 6.9:1 */
+  --text-strong: #363636;          /* Bulma's grey for bold text, row headers and viewer controls; keep it equal to --text-primary in a re-theme */
+  --text-light: #5b6576;           /* APT #94a3b8 is 2.6:1 on white; this is 5.4:1 on #f1f5f9 */
+  --link-color: #2563eb;           /* links in running text (transcript, poster); 4.7:1 on #f1f5f9 (Bulma's #3273dc is 4.3:1 on the tinted band) */
+  --link-hover: var(--text-strong);
+  --button-background: var(--text-primary);   /* resource buttons and the skip link; the label colour is derived: */
+  --on-button: var(--background-primary);
+  --success-color: #047857;        /* "Copied" state; APT #10b981 is 2.5:1 with white text */
+  --on-success: #ffffff;           /* text on the --success-color fill */
+  --award-color: #7c4a03;          /* warm amber text; 6.6:1 on its fill (APT's red #ef4444 was 3.4:1) */
+  --award-background: #fef3c7;
+  --award-border: #f3d98b;         /* hairline around the award pill; decorative */
+  --background-primary: #ffffff;
+  --background-secondary: #f8fafc;
+  --background-accent: #f1f5f9;
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --gradient-accent: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --border-radius: 12px;
+  --border-radius-lg: 16px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --focus-ring: 3px solid var(--primary-color);
+  --font-sans: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'SF Mono', Monaco, 'Cascadia Code', Consolas, 'Roboto Mono', monospace;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  line-height: 1.6;
+  font-size: 16px;
+  background-color: var(--background-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Bulma colours links, bold text and table cells itself; route those through the tokens too. */
+a {
+  color: var(--link-color);
+}
+
+a:hover {
+  color: var(--link-hover);
+}
+
+strong,
+.content h1, .content h2, .content h3, .content h4, .content h5, .content h6,
+.table th {
+  color: var(--text-strong);
+}
+
+/* Bulma sets its own families on these; keep one family throughout. */
+.button, .input, .select select, .textarea, .title, .subtitle {
+  font-family: var(--font-sans);
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  z-index: 1001;
+  top: .5rem;
+  left: .5rem;
+  padding: .5rem 1rem;
+  border-radius: var(--border-radius);
+  color: var(--on-button);
+  background: var(--button-background);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+.skip-link:hover,
+.skip-link:focus {
+  color: var(--on-button);
+}
+
+/* Focus: visible ring for keyboard users only. */
+a:focus-visible,
+button:focus-visible,
+.button:focus-visible,
+[tabindex]:focus-visible,
+summary:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.button:focus:not(:focus-visible) {
+  box-shadow: var(--shadow-md);
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+/* Long paragraphs in full-width sections: capped, not centered. */
+.measure {
+  max-width: 768px;
+}
+
+/* ---------- Site header and More Works ---------- */
+.site-header {
+  position: relative;
+  z-index: 20;
+  padding: 1rem 1.5rem 0;
+}
+
+.site-header .container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.more-works {
+  position: relative;
+}
+
+.more-works-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  min-height: 44px;
+  padding: .6rem 1.1rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  color: var(--text-primary);
+  background: var(--background-primary);
+  box-shadow: var(--shadow-sm);
+  font: 600 .9rem/1.2 var(--font-sans);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.more-works-btn:hover {
+  border-color: var(--primary-color);
+  background: var(--background-secondary);
+}
+
+.more-works-btn .dropdown-arrow {
+  font-size: .8rem;
+  transition: transform .2s ease;
+}
+
+.more-works-btn[aria-expanded="true"] .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.more-works-panel {
+  position: absolute;
+  top: calc(100% + .5rem);
+  right: 0;
+  width: 400px;
+  max-width: calc(100vw - 2rem);
+  max-height: 70vh;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  background: var(--background-primary);
+  box-shadow: var(--shadow-xl);
+}
+
+.more-works-panel[hidden] {
+  display: none;
+}
+
+.more-works-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1rem .75rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.more-works-title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.close-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: var(--border-radius);
+  color: var(--text-secondary);
+  background: none;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: var(--text-primary);
+  background: var(--background-accent);
+}
+
+.works-list {
+  margin: 0;
+  padding: .75rem;
+  list-style: none;
+}
+
+.work-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .875rem;
+  border-radius: var(--border-radius);
+  color: inherit;
+  transition: var(--transition);
+}
+
+.work-item:hover {
+  color: inherit;
+  background: var(--background-accent);
+}
+
+.work-title {
+  display: block;
+  margin-bottom: .35rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.work-description {
+  display: block;
+  margin-bottom: .35rem;
+  color: var(--text-secondary);
+  font-size: .9rem;
+  line-height: 1.45;
+}
+
+.work-venue {
+  color: var(--text-light);
+  font-size: .8125rem;
+  font-style: italic;
+}
+
+.work-item .icon {
+  flex: none;
+  color: var(--text-light);
+  font-size: .9rem;
+}
+
+/* ---------- Title block ---------- */
+.publication-header .hero-body {
+  padding: 3rem 1.5rem 2rem;
+}
+
+.publication-title {
+  margin-bottom: 1.5rem !important;
+  color: var(--text-primary) !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+}
+
+.publication-authors {
+  margin-bottom: .75rem;
+  font-weight: 500;
+}
+
+.publication-affiliations {
+  margin-bottom: .5rem;
+  color: var(--text-secondary);
+}
+
+.author-block {
+  display: inline-block;
+  margin-right: .35rem;
+}
+
+.publication-authors a {
+  position: relative;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.publication-authors a:hover {
+  color: var(--primary-hover);
+}
+
+.publication-authors a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 2px;
+  background: var(--gradient-accent);
+}
+
+.publication-authors a:hover::after,
+.publication-authors a:focus-visible::after {
+  width: 100%;
+}
+
+.eql-cntrb {
+  margin: 0 0 .5rem;
+  color: var(--text-light);
+  font-size: .875rem;
+  font-style: italic;
+}
+
+/* Bulma's 75% superscript would be 10.5px here; keep it at 12px or more. */
+.eql-cntrb sup {
+  font-size: .875em;
+}
+
+.publication-venue,
+.publication-awards {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: .75rem auto 0;
+  padding: .5rem 1rem;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+}
+
+.publication-venue {
+  color: var(--text-secondary);
+  background: var(--background-accent);
+  font-weight: 600;
+}
+
+/* Same pill shape as the venue line, in a warm tone so it reads as recognition, not an alert.
+   An optional trophy, award or medal icon before the text takes the text colour. */
+.publication-awards {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  border: 1px solid var(--award-border);
+  color: var(--award-color);
+  background: var(--award-background);
+  font-weight: 600;
+}
+
+.publication-awards .icon-svg {
+  flex: none;
+  font-size: .9em;
+}
+
+.publication-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .5rem .5rem;
+  margin-top: 1.5rem;
+}
+
+.publication-links .button {
+  margin: 0;
+}
+
+/* ---------- Buttons ---------- */
+.button {
+  border-radius: var(--border-radius) !important;
+  font-weight: 600 !important;
+  transition: var(--transition);
+}
+
+.button.is-dark {
+  border: none;
+  color: var(--on-button);
+  background: var(--button-background);
+  box-shadow: var(--shadow-md);
+}
+
+.button.is-dark:hover,
+.button.is-dark:focus-visible {
+  color: var(--on-primary);
+  background: var(--primary-color);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ---------- Sections ---------- */
+.section {
+  padding: 4rem 1.5rem;
+}
+
+/* APT's tinted band, for alternating sections. */
+.section.is-light {
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--background-secondary);
+}
+
+.section.is-light + .section.is-light {
+  border-top: 0;
+}
+
+.title.is-3 {
+  margin-bottom: 2rem !important;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* Accent bar under section headings. It follows the heading's own alignment:
+   left under left-aligned headings, centered only inside centered columns. */
+.title.is-3::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  margin-top: 1rem;
+  border-radius: 2px;
+  background: var(--gradient-accent);
+}
+
+.has-text-centered .title.is-3::after,
+.title.is-3.has-text-centered::after {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.title.is-4 {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.content.has-text-justified,
+.lead-text {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+.content.has-text-justified p:not(:last-child) {
+  margin-bottom: 1.5rem;
+}
+
+/* ---------- Media ---------- */
+/* One corner treatment for content media. The figure viewer lives outside <main>. */
+main img,
+main video,
+.publication-video,
+.poster-embed {
+  border-radius: var(--border-radius);
+}
+
+main video {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--background-accent);
+}
+
+.teaser .hero-body {
+  padding: 1rem 1.5rem 3rem;
+}
+
+.teaser figure {
+  margin: 0;
+}
+
+.teaser img,
+.teaser video {
+  display: block;
+  width: 100%;
+  height: auto;
+  box-shadow: var(--shadow-lg);
+}
+
+.teaser-caption {
+  margin-top: 1.25rem;
+  color: var(--text-secondary);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.publication-video {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%;
+  overflow: hidden;
+  /* Dark until the embed loads, so a lazy or blocked iframe never looks like an empty white box. Fixed on purpose: it must be dark in every theme. */
+  background: #0f172a;
+  box-shadow: var(--shadow-xl);
+}
+
+.publication-video iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Bulma indents figures inside .content by 2em; figures share the text's left edge. */
+.content figure {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+figure img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.figure-block {
+  margin: 0 0 1.5rem;
+}
+
+/* Bulma italicizes and centers figure captions inside .content; captions here are upright, left-aligned prose. */
+.content figure figcaption,
+figcaption {
+  margin-top: .75rem;
+  color: var(--text-secondary);
+  font-size: .9375rem;
+  font-style: normal;
+  text-align: left;
+}
+
+/* ---------- Carousel (static/js/index.js) ---------- */
+.carousel {
+  position: relative;
+}
+
+.carousel-viewport {
+  overflow: hidden;
+  border-radius: var(--border-radius-lg);
+  touch-action: pan-y;
+}
+
+.carousel-track {
+  display: flex;
+  align-items: flex-start;
+}
+
+.carousel-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+/* Without JavaScript every slide is shown in a column. */
+.carousel:not(.is-ready) .carousel-track {
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.carousel-card {
+  margin: 0;
+  padding: 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  background: var(--background-primary);
+}
+
+.carousel-card img,
+.carousel-card video {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+.carousel-card figcaption {
+  margin-top: .875rem;
+  text-align: center;
+}
+
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  margin-top: 1rem;
+}
+
+.carousel-button {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  color: var(--text-primary);
+  background: var(--background-primary);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.carousel-button:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.carousel-dots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.carousel-dot {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.carousel-dot::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--text-light);
+  border-radius: 50%;
+  transition: var(--transition);
+}
+
+.carousel-dot[aria-current="true"]::before {
+  border-color: var(--primary-color);
+  background: var(--primary-color);
+  transform: scale(1.2);
+}
+
+/* ---------- Poster ---------- */
+.poster-embed {
+  display: block;
+  width: 100%;
+  height: 75vh;
+  min-height: 480px;
+  border: 1px solid var(--border-color);
+  background: var(--background-accent);
+}
+
+.poster-links {
+  margin-top: 1rem;
+}
+
+/* Phones get the link only: embedded PDF viewers are unusable at this width. */
+@media screen and (max-width: 768px) {
+  .poster-embed {
+    display: none;
+  }
+}
+
+/* ---------- Tables (caption above, natural width, scroll inside on narrow screens) ---------- */
+.table.is-numeric td:not(:first-child),
+.table.is-numeric th:not(:first-child) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.table-figure {
+  margin: 2rem 0;
+}
+
+.table-caption {
+  margin-bottom: .75rem;
+  color: var(--text-secondary);
+  font-size: .9375rem;
+  text-wrap: pretty;
+}
+
+.table-caption strong {
+  color: var(--text-primary);
+}
+
+.table-figure .table-container {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.table-figure .table {
+  width: auto;
+  margin-bottom: 0;
+  color: var(--text-primary);
+  background-color: var(--background-primary);
+}
+
+.table-figure .table th,
+.table-figure .table td {
+  border-color: var(--border-color);
+  white-space: nowrap;
+}
+
+.table-figure .table thead th {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Align the first column with the caption above it. */
+.table-figure .table th:first-child,
+.table-figure .table td:first-child {
+  padding-left: 0;
+}
+
+.table-figure .table-container:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* ---------- BibTeX ---------- */
+.bibtex-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.bibtex-header .title {
+  margin-bottom: 0 !important;
+}
+
+.copy-bibtex-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  min-height: 44px;
+  padding: .6rem 1rem;
+  border: 0;
+  border-radius: var(--border-radius);
+  color: var(--on-primary);
+  background: var(--primary-color);
+  font: 600 .9rem/1.2 var(--font-sans);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.copy-bibtex-btn:hover {
+  color: var(--on-primary);
+  background: var(--primary-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.copy-bibtex-btn.is-copied {
+  color: var(--on-success);
+  background: var(--success-color);
+}
+
+.content pre,
+pre {
+  padding: 1.5rem;
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  color: var(--text-primary);
+  background: var(--background-accent);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-mono);
+  font-size: .9rem;
+}
+
+pre code,
+code {
+  color: var(--text-primary);
+  background: var(--background-accent);
+  font-family: var(--font-mono);
+}
+
+pre code {
+  padding: 0;
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  padding: 3rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  background: var(--background-secondary);
+}
+
+.footer .content {
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.footer a {
+  color: var(--primary-color);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.footer a:hover {
+  color: var(--primary-hover);
+}
+
+/* ---------- Contents menu and back to top (optional; built by index.js from the h2 headings) ----------
+   Hidden, and out of the tab order, until the reader scrolls past the header. Colours are theme tokens only,
+   so a re-themed page recolours it by changing the tokens. */
+.page-nav {
+  position: fixed;
+  z-index: 30;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  display: flex;
+  flex-direction: column-reverse; /* buttons first in the DOM (and tab order), menu drawn above them */
+  align-items: flex-end;
+  gap: .625rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+}
+
+.page-nav.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.page-nav-buttons {
+  display: flex;
+  gap: .375rem;
+  padding: .3125rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--background-primary);
+  box-shadow: var(--shadow-lg);
+}
+
+.page-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font: inherit;
+  font-size: .875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.page-nav-toggle {
+  padding: 0 1rem;
+  color: var(--on-button);
+  background: var(--button-background);
+}
+
+.page-nav-toggle:hover,
+.page-nav-toggle[aria-expanded="true"] {
+  color: var(--on-primary);
+  background: var(--primary-hover);
+}
+
+.page-nav-top {
+  color: var(--text-primary);
+  background: var(--background-primary);
+  border-color: var(--border-color);
+}
+
+.page-nav-top:hover {
+  background: var(--background-accent);
+}
+
+.page-nav-menu {
+  width: 18rem;
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100vh - 7rem);
+  max-height: calc(100dvh - 7rem);
+  overflow-y: auto;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: var(--background-primary);
+  box-shadow: var(--shadow-lg);
+}
+
+.page-nav-menu[hidden] {
+  display: none;
+}
+
+.page-nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: .625rem;
+  margin-bottom: .5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.page-nav-title {
+  color: var(--text-primary);
+  font-size: .9375rem;
+  font-weight: 700;
+}
+
+.page-nav-close {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  background: none;
+  font-size: 1.375rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.page-nav-close:hover {
+  color: var(--text-primary);
+  background: var(--background-accent);
+}
+
+.page-nav-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.page-nav-list a {
+  display: block;
+  padding: .375rem .625rem;
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: .875rem;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.page-nav-list a:hover {
+  color: var(--primary-color);
+  background: var(--background-accent);
+}
+
+.page-nav-list a[aria-current] {
+  color: var(--primary-color);
+  background: var(--background-accent);
+  font-weight: 600;
+}
+
+/* Headings jumped to from the menu or a link are not tucked under the screen edge. */
+main [id] {
+  scroll-margin-top: 1rem;
+}
+
+/* Room under the footer text so the floating buttons never cover its last line. */
+.page-nav ~ .footer > .container,
+.footer.has-page-nav > .container {
+  padding-bottom: 3.5rem;
+}
+
+@media screen and (max-width: 768px) {
+  .page-nav {
+    right: 1rem;
+    bottom: 1rem;
+  }
+
+  /* Icon-only on phones; the label stays as the button's accessible name. */
+  .page-nav-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .page-nav-btn {
+    min-width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .page-nav-toggle {
+    padding: 0;
+  }
+}
+
+/* ---------- Disclosures for secondary material ---------- */
+details.figure-details {
+  margin-top: 2rem;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+details.figure-details + details.figure-details {
+  margin-top: 0;
+  border-top: 0;
+}
+
+details.figure-details > summary {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  min-height: 44px;
+  padding: .5rem 0;
+  color: var(--text-primary);
+  cursor: pointer;
+  list-style: none;
+}
+
+details.figure-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.figure-details > summary::before {
+  content: '';
+  flex: none;
+  width: .45rem;
+  height: .45rem;
+  margin: 0 .2rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform .2s ease;
+}
+
+details.figure-details[open] > summary::before {
+  transform: rotate(45deg);
+}
+
+details.figure-details[open] {
+  padding-bottom: 1.5rem;
+}
+
+/* ---------- Text wrapping ---------- */
+.publication-title, .publication-authors, .publication-affiliations,
+.publication-venue, .publication-awards, h2, h3, .teaser-caption {
+  text-wrap: balance;
+}
+
+.content p, figcaption {
+  text-wrap: pretty;
+}
+
+/* ---------- Responsive ---------- */
+@media screen and (max-width: 768px) {
+  .section {
+    padding: 3rem 1rem;
+  }
+
+  .site-header {
+    padding: .75rem 1rem 0;
+  }
+
+  .publication-header .hero-body {
+    padding: 2rem 1rem 1.5rem;
+  }
+
+  .teaser .hero-body {
+    padding: .5rem 1rem 2.5rem;
+  }
+
+  .publication-title.title.is-1 {
+    font-size: 2.5rem;
+    line-height: 1.2 !important;
+  }
+
+  .publication-authors,
+  .publication-affiliations {
+    font-size: 1.0625rem !important;
+  }
+
+  .content.has-text-justified,
+  .lead-text {
+    font-size: 1rem;
+  }
+
+  /* Justified text leaves wide gaps in narrow columns. */
+  .has-text-justified {
+    text-align: left !important;
+  }
+
+  .carousel-card {
+    padding: .75rem;
+  }
+
+  .teaser-caption {
+    font-size: 1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .publication-title.title.is-1 {
+    font-size: 2rem;
+  }
+
+  .publication-links .button {
+    font-size: .875rem;
+  }
+}
+
+/* ---------- Motion: only for visitors who have not asked for less ---------- */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  main > .hero,
+  main > .section {
+    animation: fadeInUp .6s ease-out;
+  }
+
+  .carousel-track {
+    transition: transform .45s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .button.is-dark:hover,
+  .copy-bibtex-btn:hover,
+  .more-works-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .page-nav {
+    transition: opacity .25s ease, transform .25s ease, visibility .25s;
+  }
+
+  .publication-authors a::after {
+    transition: width .3s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+@media print {
+  .site-header, .page-nav, .carousel-controls, .copy-bibtex-btn, .skip-link {
+    display: none !important;
+  }
+
+  .carousel .carousel-track {
+    flex-direction: column;
+    transform: none !important;
+  }
+
+  .button {
+    color: var(--text-primary) !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Inline SVG icons (the skill's references/icons.md): one em tall, width from the viewBox, coloured by the text. */
+.icon-svg {
+  display: inline-block;
+  height: 1em;
+  overflow: visible;
+  vertical-align: -.125em;
+  fill: currentColor;
+}

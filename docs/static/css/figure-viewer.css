@@ -1,0 +1,48 @@
+/* Figure viewer: pairs with static/js/figure-viewer.js. A light layer over the page;
+   the figure itself is moved with transforms. */
+.figure-zoom-trigger { display: block; width: 100%; padding: 0; border: 0; background: transparent; font: inherit; text-align: inherit; cursor: zoom-in; }
+.figure-zoom-trigger img { transition: opacity .15s ease; }
+.figure-zoom-trigger:hover img { opacity: .9; }
+.figure-zoom-trigger:focus-visible { outline: 3px solid var(--primary-color, #2563eb); outline-offset: 4px; }
+
+body.figure-viewer-open { overflow: hidden; }
+.figure-viewer { inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; color: var(--text-secondary, #475569); background: transparent; overflow: hidden; }
+.figure-viewer[open] { display: block; animation: figure-viewer-in .2s ease-out; }
+.figure-viewer::backdrop { background: var(--background-primary, #fff); animation: figure-viewer-in .2s ease-out; }
+.figure-viewer.is-closing, .figure-viewer.is-closing::backdrop { opacity: 0; transition: opacity .15s ease-in; }
+@keyframes figure-viewer-in { from { opacity: 0; } }
+.figure-viewer button { display: inline-grid; place-items: center; min-width: 44px; min-height: 44px; padding: 0; border: 0; color: var(--text-strong, #363636); background: transparent; font: inherit; cursor: pointer; }
+.figure-viewer button:focus-visible, .figure-viewer-stage:focus-visible { outline: 3px solid var(--primary-color, #2563eb); outline-offset: -3px; }
+.figure-viewer button svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; }
+.figure-viewer button:disabled { color: #b5b5b5; color: color-mix(in srgb, var(--text-strong, #363636) 35%, var(--background-primary, #fff)); cursor: default; }
+.figure-viewer .figure-viewer-close { position: absolute; z-index: 2; top: .75rem; right: .75rem; border-radius: 50%; background: rgba(255, 255, 255, .9); background: color-mix(in srgb, var(--background-primary, #fff) 90%, transparent); }
+.figure-viewer .figure-viewer-close:hover { background: var(--background-accent, #f1f5f9); }
+.figure-viewer .figure-viewer-close svg { width: 22px; height: 22px; }
+.figure-viewer-stage { position: absolute; inset: 0; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; }
+.figure-viewer-stage img { position: absolute; top: 0; left: 0; max-width: none; width: auto; height: auto; transform-origin: 0 0; box-shadow: 0 calc(8px * var(--inverse-scale, 1)) calc(32px * var(--inverse-scale, 1)) rgba(10, 10, 10, .16), 0 0 0 calc(1px * var(--inverse-scale, 1)) rgba(10, 10, 10, .06); }
+.figure-viewer-stage.is-zoomable img { cursor: zoom-in; }
+.figure-viewer-stage.is-zoomed img { cursor: grab; }
+.figure-viewer-stage.is-zoomed img:active { cursor: grabbing; }
+.figure-viewer-status { position: absolute; z-index: 2; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90%; padding: .75rem 1rem; border-radius: 6px; margin: 0; color: var(--text-strong, #363636); background: var(--background-primary, #fff); box-shadow: 0 4px 16px rgba(10, 10, 10, .12); font-size: .875rem; text-align: center; }
+.figure-viewer-status:empty { display: none; }
+/* The caption bar floats over the stage so a zoomed figure runs to the screen edges beneath it. */
+.figure-viewer-footer { position: absolute; z-index: 1; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; gap: .5rem; padding: .75rem 1.5rem 1rem; background: rgba(255, 255, 255, .88); background: color-mix(in srgb, var(--background-primary, #fff) 88%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); transition: box-shadow .2s ease; }
+.figure-viewer:has(.is-zoomed) .figure-viewer-footer { box-shadow: 0 -1px 0 rgba(10, 10, 10, .08); }
+.figure-viewer-caption { max-width: 768px; max-height: 25dvh; overflow: auto; margin: 0; font-size: .9375rem; text-align: center; text-wrap: pretty; }
+.figure-viewer-caption strong { color: var(--text-strong, #363636); font-weight: 600; }
+.figure-viewer-zoom { display: flex; align-items: center; gap: .25rem; padding: 0 .25rem; border: 1px solid var(--border-color, #e2e8f0); border-radius: 999px; background: var(--background-primary, #fff); }
+.figure-viewer-zoom[hidden] { display: none; }
+.figure-viewer-zoom button { border-radius: 50%; }
+.figure-viewer-zoom button:not(:disabled):hover { background: var(--background-accent, #f1f5f9); }
+.figure-viewer-zoom output { min-width: 3.5rem; font-size: .875rem; text-align: center; font-variant-numeric: tabular-nums; }
+.figure-viewer-hint { padding: 0 .75rem 0 .5rem; white-space: nowrap; border-left: 1px solid var(--border-color, #e2e8f0); color: var(--text-light, #5b6576); font-size: .8125rem; }
+
+@media (max-width: 600px) {
+  .figure-viewer-footer { padding: .5rem 1rem .75rem; }
+  .figure-viewer-caption { max-height: 20dvh; font-size: .875rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .figure-viewer[open], .figure-viewer::backdrop { animation: none; }
+  .figure-zoom-trigger img, .figure-viewer-footer { transition: none; }
+}
