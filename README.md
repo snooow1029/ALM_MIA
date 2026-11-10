@@ -114,11 +114,14 @@ extract anywhere and `export AUDIO_MIA_DATA_ROOT=/that/path` instead.
 ## Cite as
 
 ```bibtex
-@article{dong2026membership,
-  title={Membership Inference Attacks against Large Audio Language Models},
-  author={Dong, Jia-Kai and Lin, Yu-Xiang and Lee, Hung-Yi},
-  journal={arXiv preprint arXiv:2603.28378},
-  year={2026}
+@inproceedings{dong26_interspeech,
+  title     = {{Membership Inference Attacks against Large Audio Language Models}},
+  author    = {Jia-Kai Dong and Yu-Xiang Lin and Hung-yi Lee},
+  year      = {2026},
+  booktitle = {{Interspeech 2026}},
+  pages     = {127--132},
+  doi       = {10.21437/Interspeech.2026-514},
+  issn      = {2958-1796},
 }
 ```
 
